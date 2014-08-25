@@ -8,29 +8,37 @@ exports.new = function(req, res){
 
 exports.login = function(req, res){
   console.log('looking into res.locals');
-  console.log('res.locals');
+  console.log(res.locals);
   res.render('users/login');
 };
 
 exports.create = function(req, res){
   User.register(req.body, function(err, user){
     if(user){
-      res.redirect('/'); // If user does not exist, then they can register successfully
+      res.redirect('/');
     }else{
-      res.redirect('/register'); // If user already exists, then return to register page
+      res.redirect('/register');
     }
   });
 };
 
 exports.authenticate = function(req, res){
-  User.authenticate(req.body, function(err, user){ // Keep err here bc Mongo is calling us back
+  User.authenticate(req.body, function(user){
     if(user){
-      req.session.userId = user._id;
-      req.session.save(function(){ // Saves userId in Redis DB
-        res.redirect('/'); // If user exists, they login & are redirected to home page
+      req.session.regenerate(function(){
+        req.session.userId = user._id;
+        req.session.save(function(){
+          res.redirect('/');
+        });
       });
     }else{
-      res.redirect('/login'); // If user is NOT authenticated, then return to login page
+      res.redirect('/login');
     }
+  });
+};
+
+exports.logout = function(req, res){
+  req.session.destroy(function(){
+    res.redirect('/');
   });
 };

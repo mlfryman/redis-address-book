@@ -1,0 +1,23 @@
+extends ../shared/template
+block content
+  .container
+    #banner.page-header
+      .row
+        .col-xs-12
+          h2#header Address Book
+      .row
+        .col-xs-6
+          table.table.table-striped.table-hover.table-bordered
+            thead
+              tr.info
+                th Name
+                th E-mail
+                th Twitter
+            tbody
+              each address in addresses
+                tr
+                  td= address.name
+                  td= address.email
+                  td= address.twitter
+
+block scripts

@@ -1,7 +1,7 @@
 'use strict';
 
 var bcrypt = require('bcrypt'),
-    Mongo = require('mongodb');
+    Mongo  = require('mongodb');
 
 function User(){
 }
@@ -9,6 +9,11 @@ function User(){
 Object.defineProperty(User, 'collection', {
   get: function(){return global.mongodb.collection('users');}
 });
+
+User.findById = function(id, cb){
+  var _id = Mongo.ObjectID(id);
+  User.collection.findOne({_id:_id}, cb);
+};
 
 User.register = function(o, cb){
   User.collection.findOne({email:o.email}, function(err, user){
@@ -19,18 +24,12 @@ User.register = function(o, cb){
 };
 
 User.authenticate = function(o, cb){
-  User.collection.findOne({email:o.email}, function(user){ // err removed because don't need it
-    if(!user){return cb();} // Return null if user email does not exist in DB
-    var isOk = bcrypt.compareSync(o.password, user.password); // Returns T/F if login password matches DB password
+  User.collection.findOne({email:o.email}, function(err, user){
+    if(!user){return cb();}
+    var isOk = bcrypt.compareSync(o.password, user.password);
     if(!isOk){return cb();}
-    cb(user); // user is the user object
+    cb(user);
   });
 };
-
-User.findById = function(id, cb){
-  var _id = Mongo.ObjectID(id);
-  User.collection.findOne({_id:_id}, cb);
-};
-
 
 module.exports = User;
