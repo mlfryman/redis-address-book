@@ -7,6 +7,8 @@ exports.new = function(req, res){
 };
 
 exports.login = function(req, res){
+  console.log('looking into res.locals');
+  console.log('res.locals');
   res.render('users/login');
 };
 
@@ -21,10 +23,10 @@ exports.create = function(req, res){
 };
 
 exports.authenticate = function(req, res){
-  User.authenticate(req.body, function(err, user){ // keep err here bc Mongo is calling us back
+  User.authenticate(req.body, function(err, user){ // Keep err here bc Mongo is calling us back
     if(user){
-      req.session.userId = user._id; //saves userId in Redis DB
-      req.session.save(function(){
+      req.session.userId = user._id;
+      req.session.save(function(){ // Saves userId in Redis DB
         res.redirect('/'); // If user exists, they login & are redirected to home page
       });
     }else{

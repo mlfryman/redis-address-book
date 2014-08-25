@@ -10,5 +10,9 @@
 
     .collapse.navbar-collapse#bs-navbar-collapse
       ul.nav.navbar-nav.navbar-right
-        li: a(href='/register') Register
-        li: a(href='/login') Login
+        if user
+          li: a(href='#')= user.email
+        else
+          li: a(href='/register') Register
+          li: a(href='/login') Login
+          li: a(href='#') Anonymous

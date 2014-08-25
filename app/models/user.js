@@ -1,6 +1,7 @@
 'use strict';
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt'),
+    Mongo = require('mongodb');
 
 function User(){
 }
@@ -22,12 +23,14 @@ User.authenticate = function(o, cb){
     if(!user){return cb();} // Return null if user email does not exist in DB
     var isOk = bcrypt.compareSync(o.password, user.password); // Returns T/F if login password matches DB password
     if(!isOk){return cb();}
-    cb(null, user); // user is the user object
+    cb(user); // user is the user object
   });
 };
 
-User.all = function(cb){
-  User.collection.find().toArray(cb);
+User.findById = function(id, cb){
+  var _id = Mongo.ObjectID(id);
+  User.collection.findOne({_id:_id}, cb);
 };
+
 
 module.exports = User;
